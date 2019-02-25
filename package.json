@@ -1,0 +1,23 @@
+{
+  "name": "bamazon",
+  "version": "1.0.0",
+  "description": "Amazon-like storefront to showcase MySQL skills learned.",
+  "main": "bamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DarrenVictoriano/LikeAmazon.git"
+  },
+  "author": "Darren Victoriano",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DarrenVictoriano/LikeAmazon/issues"
+  },
+  "homepage": "https://github.com/DarrenVictoriano/LikeAmazon#readme",
+  "dependencies": {
+    "dotenv": "^6.2.0",
+    "mysql": "^2.16.0"
+  }
+}
