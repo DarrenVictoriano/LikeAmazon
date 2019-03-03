@@ -20,5 +20,5 @@ VALUES ("MacBook", "Electronics", 1999, 10),
         ("Firebolt Scroll", "Magic", 1999, 10),
         ("Lightning Scroll", "Magic", 1999, 10),
         ("Stealth Scroll", "Magic", 1999, 10);
-        
+
 SELECT * FROM products;

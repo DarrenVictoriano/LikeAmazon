@@ -23,7 +23,7 @@ function start() {
         // Log all results of the SELECT statement
 
         for (var i = 0; i < res.length; i++) {
-            choicesArr.push(res[i].item_id + ") " + res[i].product_name + ": $" + res[i].price);
+            choicesArr.push(res[i].item_id + ") " + res[i].product_name + ": $" + res[i].price + ", Stock: " + res[i].stock_quantity);
         }
 
         inquirer
@@ -39,10 +39,6 @@ function start() {
                     if (answer.buyThis == choicesArr[i]) {
                         buyThis(answer.buyThis);
                         break;
-                    } else {
-                        console.log("a " + answer.buyThis);
-                        console.log("c " + choicesArr[i]);
-                        break;
                     }
                 }
             });
@@ -50,19 +46,63 @@ function start() {
 }
 
 function buyThis(item) {
+    connection.query("SELECT * FROM products WHERE item_id = " + item.charAt(0), function (err, res) {
+        if (err) throw err;
+
+        inquirer
+            .prompt({
+                name: "quantity",
+                type: "input",
+                message: "How many " + res[0].product_name + " you wish to purchase?",
+                filter: function (val) {
+                    return Number(val);
+                }
+            })
+            .then(function (answer) {
+                // based on their answer, either call the bid or the post functions
+                if (answer.quantity >= res[0].stock_quantity) {
+                    buyFailed(item);
+                } else {
+                    var newQ = res[0].stock_quantity - answer.quantity;
+                    var cost = newQ * res[0].price;
+                    buySuccess(item, newQ, cost);
+                }
+            });
+    });
+}
+
+function buyFailed(item) {
+
     inquirer
         .prompt({
-            name: "buyThis",
+            name: "quantity",
             type: "list",
-            message: "You successfully purchased: " + item,
-            choices: ["Buy More", "Quit"]
+            message: "Apologies, we do not have sufficient stock",
+            choices: ["Perhaps, buy a lower quantity?", "Or buy a different item?"]
         })
         .then(function (answer) {
             // based on their answer, either call the bid or the post functions
-            if (answer.buyThis == "Buy More") {
-                start();
+            if (answer.quantity == "Perhaps, buy a lower quantity?") {
+                buyThis(item)
             } else {
-                connection.end();
+                start();
             }
         });
+}
+
+function buySuccess(item, quantity, cost) {
+    connection.query("UPDATE products SET stock_quantity = " + quantity + " WHERE item_id = " + item.charAt(0), function (err, res) {
+        if (err) throw err;
+
+        inquirer
+            .prompt({
+                name: "another",
+                type: "input",
+                message: "Success! total cost of this purchase is $" + cost
+            })
+            .then(function (answer) {
+                // based on their answer, either call the bid or the post functions
+                connection.end();
+            });
+    });
 }
