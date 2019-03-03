@@ -60,11 +60,11 @@ function buyThis(item) {
             })
             .then(function (answer) {
                 // based on their answer, either call the bid or the post functions
-                if (answer.quantity >= res[0].stock_quantity) {
+                if (answer.quantity > res[0].stock_quantity) {
                     buyFailed(item);
                 } else {
                     var newQ = res[0].stock_quantity - answer.quantity;
-                    var cost = newQ * res[0].price;
+                    var cost = answer.quantity * res[0].price;
                     buySuccess(item, newQ, cost);
                 }
             });
